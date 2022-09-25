@@ -55,6 +55,9 @@ namespace MyBooks
             {
                 endpoints.MapControllers();
             });
+
+            // Seed default data if DB is empty.
+            AppDbInitializer.Seed(app);
         }
     }
 }
