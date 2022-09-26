@@ -3,6 +3,7 @@ using MyBooks.Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace MyBooks.Data.Services
 {
@@ -36,5 +37,25 @@ namespace MyBooks.Data.Services
         public List<Book> GetAllBooks() => _context.Books.ToList();
 
         public Book GetBookById(int id) => _context.Books.FirstOrDefault(x => x.Id.Equals(id));
+
+        public Book UpdateBookById(int bookId, BookVM bookVM)
+        {
+            var book = GetBookById(bookId);
+            if(book != null)
+            {
+                book.Title = bookVM.Title;
+                book.Description = bookVM.Description;
+                book.IsRead = bookVM.IsRead;
+                book.DateRead = bookVM.IsRead ? bookVM.DateRead.Value : null;
+                book.Rate = bookVM.IsRead ? bookVM.Rate.Value : null;
+                book.Genre = bookVM.Genre;
+                book.Author = bookVM.Author;
+                book.CoverUrl = bookVM.CoverUrl;
+
+                _context.SaveChanges();
+            }
+
+            return book;
+        }
     }
 }
