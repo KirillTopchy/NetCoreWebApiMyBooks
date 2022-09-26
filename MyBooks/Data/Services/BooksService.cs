@@ -1,6 +1,8 @@
 ﻿using MyBooks.Data.Models;
 using MyBooks.Data.ViewModels;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MyBooks.Data.Services
 {
@@ -30,5 +32,9 @@ namespace MyBooks.Data.Services
             _context.Books.Add(book);
             _context.SaveChanges();
         }
+
+        public List<Book> GetAllBooks() => _context.Books.ToList();
+
+        public Book GetBookById(int id) => _context.Books.FirstOrDefault(x => x.Id.Equals(id));
     }
 }
