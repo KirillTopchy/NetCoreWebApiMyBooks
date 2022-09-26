@@ -8,41 +8,46 @@ namespace MyBooks.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        public BooksService BooksService { get; set; }
+        private readonly BooksService _booksService;
 
         public BooksController(BooksService booksService)
         {
-            BooksService = booksService;
+            _booksService = booksService;
         }
 
         [HttpPost("add-book")]
         public IActionResult AddBook([FromBody] BookVM book)
         {
-            BooksService.AddBook(book);
+            _booksService.AddBook(book);
             return Ok();
         }
 
         [HttpGet("get-all-books")]
         public IActionResult GetAllBooks()
         {
-            var books = BooksService.GetAllBooks();
+            var books = _booksService.GetAllBooks();
             return Ok(books);
         }
 
         [HttpGet("get-book-by-id/{id}")]
         public IActionResult GetBookById(int id)
         {
-            var book = BooksService.GetBookById(id);
+            var book = _booksService.GetBookById(id);
             return Ok(book);
         }
 
         [HttpPut("update-book-by-id/{id}")]
         public IActionResult UpdateBookById(int id, [FromBody]BookVM book)
         {
-            var updatedBook = BooksService.UpdateBookById(id, book);
+            var updatedBook = _booksService.UpdateBookById(id, book);
             return Ok(updatedBook);
         }
 
-
+        [HttpDelete("delete-book-by-id/{id}")]
+        public IActionResult DeleteBookById(int id)
+        {
+            _booksService.DeleteBookById(id);
+            return Ok();
+        }
     }
 }

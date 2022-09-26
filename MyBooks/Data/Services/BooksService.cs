@@ -3,6 +3,7 @@ using MyBooks.Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 
 namespace MyBooks.Data.Services
@@ -56,6 +57,16 @@ namespace MyBooks.Data.Services
             }
 
             return book;
+        }
+
+        public void DeleteBookById(int bookId)
+        {
+            var book = GetBookById(bookId);
+            if(book != null)
+            {
+                _context.Books.Remove(book);
+                _context.SaveChanges();
+            }
         }
     }
 }
