@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MyBooks.Data.Models
 {
@@ -18,5 +19,6 @@ namespace MyBooks.Data.Models
         // Navigation properties
         public int PublisherId { get; set; }
         public Publisher Publisher { get; set; }
+        public List<Book_Author_JoinModel> Book_Authors { get; set; }
     }
 }
