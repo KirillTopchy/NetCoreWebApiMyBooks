@@ -16,7 +16,7 @@ namespace MyBooks.Data.Services
             _context = context;
         }
 
-        public void AddBook(BookVM bookVM)
+        public void AddBookWithAuthors(BookVM bookVM)
         {
             var book = new Book()
             {
@@ -26,13 +26,25 @@ namespace MyBooks.Data.Services
                 DateRead = bookVM.IsRead ? bookVM.DateRead.Value : null,
                 Rate = bookVM.IsRead ? bookVM.Rate.Value : null,
                 Genre = bookVM.Genre,
-                Author = bookVM.Author,
                 CoverUrl = bookVM.CoverUrl,
-                DateAdded = DateTime.Now
+                DateAdded = DateTime.Now,
+                PublisherId = bookVM.PublisherId,
             };
 
             _context.Books.Add(book);
             _context.SaveChanges();
+
+            foreach (var id in bookVM.AuthorsIds)
+            {
+                var bookAuthor = new Book_Author_JoinModel()
+                {
+                    BookId = book.Id,
+                    AuthorId = id
+                };
+
+                _context.Books_Authors.Add(bookAuthor);
+                _context.SaveChanges();
+            }
         }
 
         public List<Book> GetAllBooks() => _context.Books.ToList();
@@ -50,7 +62,6 @@ namespace MyBooks.Data.Services
                 book.DateRead = bookVM.IsRead ? bookVM.DateRead.Value : null;
                 book.Rate = bookVM.IsRead ? bookVM.Rate.Value : null;
                 book.Genre = bookVM.Genre;
-                book.Author = bookVM.Author;
                 book.CoverUrl = bookVM.CoverUrl;
 
                 _context.SaveChanges();
