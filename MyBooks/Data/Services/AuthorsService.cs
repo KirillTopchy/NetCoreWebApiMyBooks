@@ -1,5 +1,6 @@
 ﻿using MyBooks.Data.Models;
 using MyBooks.Data.ViewModels;
+using System.Linq;
 
 namespace MyBooks.Data.Services
 {
@@ -8,7 +9,7 @@ namespace MyBooks.Data.Services
         private readonly AppDbContext _context;
         public AuthorsService(AppDbContext context)
         {
-            _context = context; 
+            _context = context;
         }
 
         public void AddAuthor(AuthorVM authorVM)
@@ -20,6 +21,24 @@ namespace MyBooks.Data.Services
 
             _context.Authors.Add(author);
             _context.SaveChanges();
+        }
+
+        public AuthorWithBooksVM GetAuthorWithBooksAndPublishers(int authorId)
+        {
+            var author = _context.Authors.Where(x => x.Id == authorId)
+                .Select(author => new AuthorWithBooksVM()
+                    {
+                        FullName = author.FullName,
+                        BookTitles = author.Book_Authors
+                            .Select(bookAuthorJoinModel => bookAuthorJoinModel.Book.Title)
+                            .ToList(),
+                        BookPublishers = author.Book_Authors
+                            .Select(bookAuthorJoinModel => bookAuthorJoinModel.Book.Publisher)
+                            .ToList()
+                    })
+                .FirstOrDefault();
+
+            return author;
         }
     }
 }

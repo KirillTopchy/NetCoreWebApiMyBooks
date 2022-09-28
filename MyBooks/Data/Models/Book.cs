@@ -19,5 +19,6 @@ namespace MyBooks.Data.Models
         public int PublisherId { get; set; }
         public Publisher Publisher { get; set; }
         public List<Book_Author_JoinModel> Book_Authors { get; set; }
+        public List<Book_Publisher_JoinModel> Book_Publisher { get; set; }
     }
 }
