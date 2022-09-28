@@ -3,8 +3,6 @@ using MyBooks.Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Threading;
 
 namespace MyBooks.Data.Services
 {
@@ -49,12 +47,30 @@ namespace MyBooks.Data.Services
 
         public List<Book> GetAllBooks() => _context.Books.ToList();
 
-        public Book GetBookById(int id) => _context.Books.FirstOrDefault(x => x.Id.Equals(id));
+        public BookWithAuthorsVM GetBookById(int id)
+        {
+            var bookWithAuthors = _context.Books.Where(n => n.Id == id)
+                .Select(book => new BookWithAuthorsVM()
+                {
+                    Title = book.Title,
+                    Description = book.Description,
+                    IsRead = book.IsRead,
+                    DateRead = book.IsRead ? book.DateRead.Value : null,
+                    Rate = book.IsRead ? book.Rate.Value : null,
+                    Genre = book.Genre,
+                    CoverUrl = book.CoverUrl,
+                    PublisherName = book.Publisher.Name,
+                    AuthorNames = book.Book_Authors.Select(n => n.Author.FullName).ToList()
+                })
+                .FirstOrDefault();
+
+            return bookWithAuthors;
+        }
 
         public Book UpdateBookById(int bookId, BookVM bookVM)
         {
-            var book = GetBookById(bookId);
-            if(book != null)
+            var book = _context.Books.FirstOrDefault(x => x.Id.Equals(bookId));
+            if (book != null)
             {
                 book.Title = bookVM.Title;
                 book.Description = bookVM.Description;
@@ -72,8 +88,8 @@ namespace MyBooks.Data.Services
 
         public void DeleteBookById(int bookId)
         {
-            var book = GetBookById(bookId);
-            if(book != null)
+            var book = _context.Books.FirstOrDefault(x => x.Id.Equals(bookId));
+            if (book != null)
             {
                 _context.Books.Remove(book);
                 _context.SaveChanges();
