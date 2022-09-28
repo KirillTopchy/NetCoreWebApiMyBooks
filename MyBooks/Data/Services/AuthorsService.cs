@@ -23,10 +23,10 @@ namespace MyBooks.Data.Services
             _context.SaveChanges();
         }
 
-        public AuthorWithBooksVM GetAuthorWithBooksAndPublishers(int authorId)
+        public AuthorWithBooksAndPublishersVm GetAuthorWithBooksAndPublishers(int authorId)
         {
             var author = _context.Authors.Where(x => x.Id == authorId)
-                .Select(author => new AuthorWithBooksVM()
+                .Select(author => new AuthorWithBooksAndPublishersVm()
                     {
                         FullName = author.FullName,
                         BookTitles = author.Book_Authors

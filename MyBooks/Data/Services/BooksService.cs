@@ -47,9 +47,9 @@ namespace MyBooks.Data.Services
 
         public List<Book> GetAllBooks() => _context.Books.ToList();
 
-        public BookWithAuthorsVM GetBookById(int id)
+        public BookWithAuthorsVM GetBookById(int bookId)
         {
-            var bookWithAuthors = _context.Books.Where(n => n.Id == id)
+            var bookWithAuthors = _context.Books.Where(n => n.Id == bookId)
                 .Select(book => new BookWithAuthorsVM()
                 {
                     Title = book.Title,

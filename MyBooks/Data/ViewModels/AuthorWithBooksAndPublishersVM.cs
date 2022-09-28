@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MyBooks.Data.ViewModels
 {
-    public class AuthorWithBooksVM
+    public class AuthorWithBooksAndPublishersVm
     {
         public string FullName { get; set; }
         public List<string> BookTitles { get; set; }
