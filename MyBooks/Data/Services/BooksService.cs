@@ -14,7 +14,7 @@ namespace MyBooks.Data.Services
             _context = context;
         }
 
-        public void AddBookWithAuthors(BookVM bookVM)
+        public Book AddBookWithAuthors(BookVM bookVM)
         {
             var book = new Book()
             {
@@ -43,6 +43,8 @@ namespace MyBooks.Data.Services
                 _context.Books_Authors.Add(bookAuthor);
                 _context.SaveChanges();
             }
+
+            return book;
         }
 
         public List<Book> GetAllBooks() => _context.Books.ToList();
@@ -86,7 +88,7 @@ namespace MyBooks.Data.Services
             return book;
         }
 
-        public void DeleteBookById(int bookId)
+        public bool DeleteBookById(int bookId)
         {
             var book = _context.Books.FirstOrDefault(x => x.Id.Equals(bookId));
             if (book != null)
@@ -94,6 +96,8 @@ namespace MyBooks.Data.Services
                 _context.Books.Remove(book);
                 _context.SaveChanges();
             }
+
+            return book != null;
         }
     }
 }

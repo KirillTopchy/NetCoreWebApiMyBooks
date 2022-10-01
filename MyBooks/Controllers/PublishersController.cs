@@ -18,22 +18,41 @@ namespace MyBooks.Controllers
         [HttpPost("add-publisher")]
         public IActionResult AddPublisher([FromBody] PublisherVM publisher)
         {
-            _publishersService.AddPublisher(publisher);
-            return Ok();
+            var newPublisher = _publishersService.AddPublisher(publisher);
+            return Created(nameof(AddPublisher), newPublisher);
         }
 
         [HttpGet("get-publisher-books-with-authors-by-publisher-id/{id}")]
         public IActionResult GetPublisherData(int id)
         {
             var result = _publishersService.GetPublisherData(id);
-            return Ok(result);
+
+            if (result != null)
+                return Ok(result);
+            else
+                return NotFound();
+        }
+
+        [HttpGet("get-publisher-by-id/{id}")]
+        public IActionResult GetPublisherById(int id)
+        {
+            var result = _publishersService.GetPublisherById(id);
+
+            if (result != null)
+                return Ok(result);
+            else
+                return NotFound();
         }
 
         [HttpDelete("delete-publisher-by-id/{id}")]
         public IActionResult DeletePublisherById(int id)
         {
-            _publishersService.DelePublisherById(id);
-            return Ok();
+            var deleted = _publishersService.DelePublisherById(id);
+
+            if (deleted)
+                return Ok();
+            else
+                return NotFound();
         }
     }
 }

@@ -11,21 +11,25 @@ namespace MyBooks.Controllers
         private readonly AuthorsService _authorsService;
         public AuthorsController(AuthorsService authorsService)
         {
-            _authorsService = authorsService;   
+            _authorsService = authorsService;
         }
 
         [HttpPost("add-author")]
         public IActionResult AddAuthor([FromBody] AuthorVM author)
         {
-            _authorsService.AddAuthor(author);
-            return Ok();
+            var newAuthor = _authorsService.AddAuthor(author);
+            return Created(nameof(AddAuthor), newAuthor);
         }
 
         [HttpGet("get-author-with-books-and-publishers-by-id/{id}")]
         public IActionResult GetAuthorWithBooksAndPublishers(int id)
         {
             var result = _authorsService.GetAuthorWithBooksAndPublishers(id);
-            return Ok(result);
+
+            if (result != null)
+                return Ok(result);
+            else
+                return NotFound();
         }
     }
 }

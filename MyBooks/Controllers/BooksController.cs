@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBooks.Data.Services;
 using MyBooks.Data.ViewModels;
+using System.Linq;
 
 namespace MyBooks.Controllers
 {
@@ -18,36 +19,51 @@ namespace MyBooks.Controllers
         [HttpPost("add-book-with-authors")]
         public IActionResult AddBook([FromBody] BookVM book)
         {
-            _booksService.AddBookWithAuthors(book);
-            return Ok();
+            var newBook = _booksService.AddBookWithAuthors(book);
+            return Created(nameof(AddBook), newBook);
         }
 
         [HttpGet("get-all-books")]
         public IActionResult GetAllBooks()
         {
             var books = _booksService.GetAllBooks();
-            return Ok(books);
+
+            if (books.Any())
+                return Ok(books);
+            else
+                return NotFound();
         }
 
         [HttpGet("get-book-by-id/{id}")]
         public IActionResult GetBookById(int id)
         {
             var book = _booksService.GetBookById(id);
-            return Ok(book);
+
+            if (book != null)
+                return Ok(book);
+            else
+                return NotFound();
         }
 
         [HttpPut("update-book-by-id/{id}")]
-        public IActionResult UpdateBookById(int id, [FromBody]BookVM book)
+        public IActionResult UpdateBookById(int id, [FromBody] BookVM book)
         {
             var updatedBook = _booksService.UpdateBookById(id, book);
-            return Ok(updatedBook);
+            if (updatedBook != null)
+                return Ok(updatedBook);
+            else
+                return NotFound();
         }
 
         [HttpDelete("delete-book-by-id/{id}")]
         public IActionResult DeleteBookById(int id)
         {
-            _booksService.DeleteBookById(id);
-            return Ok();
+            var deleted = _booksService.DeleteBookById(id);
+
+            if (deleted)
+                return Ok();
+            else
+                return NotFound();
         }
     }
 }
