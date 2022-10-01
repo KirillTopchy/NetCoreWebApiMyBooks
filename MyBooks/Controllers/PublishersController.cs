@@ -49,8 +49,8 @@ namespace MyBooks.Controllers
         [HttpGet("get-publisher-by-id/{id}")]
         public IActionResult GetPublisherById(int id)
         {
-            // Global error to test global error handling. if want to test endpoint comment next row.
-            throw new Exception("This is an exception that well be handled by middleware");
+            // Global error to test global error handling. If want to test remove comment from next row.
+            //throw new Exception("This is an exception that well be handled by middleware");
 
             var result = _publishersService.GetPublisherById(id);
 

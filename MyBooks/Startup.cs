@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using MyBooks.Data;
 using MyBooks.Data.Services;
 using MyBooks.Exceptions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace MyBooks
 {
@@ -59,7 +60,8 @@ namespace MyBooks
             app.UseAuthorization();
 
             // Exception Handling
-            app.ConfigureBuildInExceptionHandler();
+            app.ConfigureBuildInExceptionHandler(); 
+            //app.ConfigureCustomExceptionHandler(); if want to test remove comments and comment out previous line.
 
             app.UseEndpoints(endpoints =>
             {
