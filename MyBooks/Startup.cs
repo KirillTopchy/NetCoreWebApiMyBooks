@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using MyBooks.Data;
 using MyBooks.Data.Services;
+using MyBooks.Exceptions;
 
 namespace MyBooks
 {
@@ -56,6 +57,9 @@ namespace MyBooks
             app.UseRouting();
 
             app.UseAuthorization();
+
+            // Exception Handling
+            app.ConfigureBuildInExceptionHandler();
 
             app.UseEndpoints(endpoints =>
             {
