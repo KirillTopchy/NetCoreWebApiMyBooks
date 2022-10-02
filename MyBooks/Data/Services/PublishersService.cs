@@ -1,4 +1,5 @@
 ﻿using MyBooks.Data.Models;
+using MyBooks.Data.Paging;
 using MyBooks.Data.ViewModels;
 using MyBooks.Exceptions;
 using System;
@@ -73,12 +74,13 @@ namespace MyBooks.Data.Services
 
         private bool StringStartsWithNumber(string name) => Regex.IsMatch(name, @"^\d");
 
-        public List<Publisher> GetAllPublishers(string sortBy, string searchString)
+        public List<Publisher> GetAllPublishers(string sortBy, string searchString, int? pageNumber)
         {
             var allPublishers = _context.Publishers
                 .OrderBy(p => p.Name)
                 .ToList();
 
+            // Sorting
             if (!string.IsNullOrEmpty(sortBy))
             {
                 switch (sortBy)
@@ -91,11 +93,16 @@ namespace MyBooks.Data.Services
                 }
             }
 
+            // Filtering
             if (!string.IsNullOrEmpty(searchString))
             {
                 allPublishers = allPublishers.Where(p => p.Name.Contains(searchString,
                     StringComparison.CurrentCultureIgnoreCase)).ToList();
             }
+
+            // Paging
+            int pageSize = 5;
+            allPublishers = PaginatedList<Publisher>.Create(allPublishers.AsQueryable(), pageNumber ?? 1, pageSize);
 
             return allPublishers;
         } 

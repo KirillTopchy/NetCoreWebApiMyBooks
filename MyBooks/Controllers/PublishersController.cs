@@ -21,11 +21,11 @@ namespace MyBooks.Controllers
         }
 
         [HttpGet("get-all-publishers")]
-        public IActionResult GetAllPublishers(string sortBy, string searchString)
+        public IActionResult GetAllPublishers(string sortBy, string searchString, int pageNumber)
         {
             try
             {
-                var result = _publishersService.GetAllPublishers(sortBy, searchString);
+                var result = _publishersService.GetAllPublishers(sortBy, searchString, pageNumber);
                 return Ok(result);
             }
             catch (Exception)
