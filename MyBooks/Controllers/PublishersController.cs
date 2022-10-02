@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using MyBooks.ActionResults;
 using MyBooks.Data.Models;
 using MyBooks.Data.Services;
 using MyBooks.Data.ViewModels;
@@ -49,7 +50,7 @@ namespace MyBooks.Controllers
         }
 
         [HttpGet("get-publisher-by-id/{id}")]
-        public ActionResult<Publisher> GetPublisherById(int id)
+        public CustomActionResult GetPublisherById(int id)
         {
             // Global error to test global error handling. If want to test remove comment from next row.
             //throw new Exception("This is an exception that well be handled by middleware");
@@ -57,10 +58,25 @@ namespace MyBooks.Controllers
             var result = _publishersService.GetPublisherById(id);
 
             if (result != null)
+            {
+                var responseObject = new CustomActionResultVM()
+                {
+                    Publisher = result
+                };
+
+                return new CustomActionResult(responseObject);
                 //return Ok(result);
-                return result;
+            }
             else
-                return NotFound();
+            {
+                var responseObject = new CustomActionResultVM()
+                {
+                    Exception = new Exception("This is comming from publishers controller")
+                };
+
+                return new CustomActionResult(responseObject);
+                //return NotFound();
+            }
         }
 
         [HttpDelete("delete-publisher-by-id/{id}")]
