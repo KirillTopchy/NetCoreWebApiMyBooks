@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using MyBooks.Data.Models;
 using MyBooks.Data.Services;
 using MyBooks.Data.ViewModels;
@@ -26,7 +27,7 @@ namespace MyBooks.Controllers
                 var newPublisher = _publishersService.AddPublisher(publisher);
                 return Created(nameof(AddPublisher), newPublisher);
             }
-            catch(PublisherNameException ex)
+            catch (PublisherNameException ex)
             {
                 return BadRequest($"{ex.Message}, Publisher name: {ex.PublisherName}");
             }
@@ -48,7 +49,7 @@ namespace MyBooks.Controllers
         }
 
         [HttpGet("get-publisher-by-id/{id}")]
-        public Publisher GetPublisherById(int id)
+        public ActionResult<Publisher> GetPublisherById(int id)
         {
             // Global error to test global error handling. If want to test remove comment from next row.
             //throw new Exception("This is an exception that well be handled by middleware");
@@ -56,11 +57,10 @@ namespace MyBooks.Controllers
             var result = _publishersService.GetPublisherById(id);
 
             if (result != null)
+                //return Ok(result);
                 return result;
-            //return Ok(result);
             else
-                return null;
-                //return NotFound();
+                return NotFound();
         }
 
         [HttpDelete("delete-publisher-by-id/{id}")]
@@ -71,7 +71,7 @@ namespace MyBooks.Controllers
                 _publishersService.DelePublisherById(id);
                 return Ok();
             }
-         
+
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
