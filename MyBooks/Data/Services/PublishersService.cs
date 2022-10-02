@@ -2,6 +2,7 @@
 using MyBooks.Data.ViewModels;
 using MyBooks.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -71,5 +72,7 @@ namespace MyBooks.Data.Services
         }
 
         private bool StringStartsWithNumber(string name) => Regex.IsMatch(name, @"^\d");
+
+        public List<Publisher> GetAllPublishers() => _context.Publishers.ToList();
     }
 }

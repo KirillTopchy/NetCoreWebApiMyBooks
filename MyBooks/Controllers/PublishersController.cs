@@ -20,6 +20,20 @@ namespace MyBooks.Controllers
             _publishersService = publishersService;
         }
 
+        [HttpGet("get-all-publishers")]
+        public IActionResult GetAllPublishers()
+        {
+            try
+            {
+                var result = _publishersService.GetAllPublishers();
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Sorry, we could not load the publishers");
+            }
+        }
+
         [HttpPost("add-publisher")]
         public IActionResult AddPublisher([FromBody] PublisherVM publisher)
         {
@@ -50,7 +64,7 @@ namespace MyBooks.Controllers
         }
 
         [HttpGet("get-publisher-by-id/{id}")]
-        public CustomActionResult GetPublisherById(int id)
+        public /*CustomActionResult*/ IActionResult GetPublisherById(int id)
         {
             // Global error to test global error handling. If want to test remove comment from next row.
             //throw new Exception("This is an exception that well be handled by middleware");
@@ -59,23 +73,23 @@ namespace MyBooks.Controllers
 
             if (result != null)
             {
-                var responseObject = new CustomActionResultVM()
-                {
-                    Publisher = result
-                };
+                //var responseObject = new CustomActionResultVM()
+                //{
+                //    Publisher = result
+                //};
 
-                return new CustomActionResult(responseObject);
-                //return Ok(result);
+                //return new CustomActionResult(responseObject);
+                return Ok(result);
             }
             else
             {
-                var responseObject = new CustomActionResultVM()
-                {
-                    Exception = new Exception("This is comming from publishers controller")
-                };
+                //var responseObject = new CustomActionResultVM()
+                //{
+                //    Exception = new Exception("This is comming from publishers controller")
+                //};
 
-                return new CustomActionResult(responseObject);
-                //return NotFound();
+                //return new CustomActionResult(responseObject);
+                return NotFound();
             }
         }
 
