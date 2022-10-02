@@ -73,6 +73,25 @@ namespace MyBooks.Data.Services
 
         private bool StringStartsWithNumber(string name) => Regex.IsMatch(name, @"^\d");
 
-        public List<Publisher> GetAllPublishers() => _context.Publishers.ToList();
+        public List<Publisher> GetAllPublishers(string sortBy)
+        {
+            var allPublishers = _context.Publishers
+                .OrderBy(p => p.Name)
+                .ToList();
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                switch (sortBy)
+                {
+                    case "name_desc":
+                        allPublishers = allPublishers.OrderByDescending(p => p.Name).ToList();
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return allPublishers;
+        } 
     }
 }
