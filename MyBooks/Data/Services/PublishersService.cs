@@ -73,7 +73,7 @@ namespace MyBooks.Data.Services
 
         private bool StringStartsWithNumber(string name) => Regex.IsMatch(name, @"^\d");
 
-        public List<Publisher> GetAllPublishers(string sortBy)
+        public List<Publisher> GetAllPublishers(string sortBy, string searchString)
         {
             var allPublishers = _context.Publishers
                 .OrderBy(p => p.Name)
@@ -89,6 +89,12 @@ namespace MyBooks.Data.Services
                     default:
                         break;
                 }
+            }
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                allPublishers = allPublishers.Where(p => p.Name.Contains(searchString,
+                    StringComparison.CurrentCultureIgnoreCase)).ToList();
             }
 
             return allPublishers;
