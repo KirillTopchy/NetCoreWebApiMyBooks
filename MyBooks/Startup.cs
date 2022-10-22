@@ -42,7 +42,8 @@ namespace MyBooks
                 config.DefaultApiVersion = new ApiVersion(1, 0);
                 config.AssumeDefaultVersionWhenUnspecified = true;
 
-                config.ApiVersionReader = new HeaderApiVersionReader("custom-version-header");
+                //config.ApiVersionReader = new HeaderApiVersionReader("custom-version-header");
+                config.ApiVersionReader = new MediaTypeApiVersionReader();
             });
 
             services.AddSwaggerGen(c =>
