@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +9,6 @@ using Microsoft.OpenApi.Models;
 using MyBooks.Data;
 using MyBooks.Data.Services;
 using MyBooks.Exceptions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MyBooks
 {
@@ -26,7 +26,6 @@ namespace MyBooks
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
 
             // Configure DBContext with SQL
@@ -37,7 +36,11 @@ namespace MyBooks
             services.AddTransient<AuthorsService>();
             services.AddTransient<PublishersService>();
 
-            services.AddApiVersioning();
+            services.AddApiVersioning(config =>
+            {
+                config.DefaultApiVersion = new ApiVersion(1, 0);
+                config.AssumeDefaultVersionWhenUnspecified = true;
+            });
 
             services.AddSwaggerGen(c =>
             {
