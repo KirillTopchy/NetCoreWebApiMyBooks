@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MyBooks.Controllers;
@@ -8,6 +9,7 @@ using MyBooks.Data.Services;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MyBooksTests
 {
@@ -37,6 +39,30 @@ namespace MyBooksTests
         public void CleanUp()
         {
             _context.Database.EnsureDeleted();
+        }
+
+        [Test, Order(1)]
+        public void HTTPGET_GetAllPublishers_WithSortBySearchPageNr_ReturnOk_Test()
+        {
+            var actionResult = _publishersController.GetAllPublishers("name_desc", "Publisher", 1);
+            Assert.That(actionResult, Is.TypeOf<OkObjectResult>());
+            var resultDataFirstPage = (actionResult as OkObjectResult).Value as List<Publisher>;
+            Assert.Multiple(() =>
+            {
+                Assert.That(resultDataFirstPage.First().Name, Is.EqualTo("Publisher 6"));
+                Assert.That(resultDataFirstPage.First().Id, Is.EqualTo(6));
+                Assert.That(resultDataFirstPage, Has.Count.EqualTo(5));
+            });
+
+            var actionResultSecond = _publishersController.GetAllPublishers("name_desc", "Publisher", 2);
+            Assert.That(actionResultSecond, Is.TypeOf<OkObjectResult>());
+            var resultDataSecondPage = (actionResultSecond as OkObjectResult).Value as List<Publisher>;
+            Assert.Multiple(() =>
+            {
+                Assert.That(resultDataSecondPage.First().Name, Is.EqualTo("Publisher 1"));
+                Assert.That(resultDataSecondPage.First().Id, Is.EqualTo(1));
+                Assert.That(resultDataSecondPage, Has.Count.EqualTo(1));
+            });
         }
 
         private void SeedDatabase()
