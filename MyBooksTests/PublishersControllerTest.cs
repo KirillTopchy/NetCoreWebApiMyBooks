@@ -89,7 +89,7 @@ namespace MyBooksTests
         }
 
         [Test, Order(4)]
-        public void HTTPGET_AddPublisher_ThrowsNameExcaption_And_ReturnBadRequest_Test()
+        public void HTTPPOST_AddPublisher_ThrowsNameExcaption_And_ReturnBadRequest_Test()
         {
             var publisherVM = new PublisherVM()
             {
@@ -108,7 +108,7 @@ namespace MyBooksTests
         }
 
         [Test, Order(5)]
-        public void HTTPGET_AddPublisher_ReturnCreated_Test()
+        public void HTTPPOST_AddPublisher_ReturnCreated_Test()
         {
             var publisherVM = new PublisherVM()
             {
@@ -120,6 +120,31 @@ namespace MyBooksTests
             {
                 Assert.That(actionResult, Is.TypeOf<CreatedResult>());
                 Assert.That(_context.Publishers.ToList(), Has.Count.EqualTo(7));
+            });
+        }
+
+        [Test, Order(6)]
+        public void HTTPDELETE_DeletePublisherById_BadRequest_Test()
+        {
+            var publisherId = 77;
+            var actionResult = _publishersController.DeletePublisherById(publisherId);
+            var resultData = (actionResult as BadRequestObjectResult).Value.ToString();
+            Assert.Multiple(() =>
+            {
+                Assert.That(actionResult, Is.TypeOf<BadRequestObjectResult>());
+                Assert.That(_context.Publishers.ToList(), Has.Count.EqualTo(7));
+                Assert.That(resultData, Is.EqualTo($"The publisher with id {publisherId} does not exist"));
+            });
+        }
+
+        [Test, Order(7)]
+        public void HTTPDELETE_DeletePublisherById_Ok_Test()
+        {
+            var actionResult = _publishersController.DeletePublisherById(1);
+            Assert.Multiple(() =>
+            {
+                Assert.That(actionResult, Is.TypeOf<OkResult>());
+                Assert.That(_context.Publishers.ToList(), Has.Count.EqualTo(6));
             });
         }
 
