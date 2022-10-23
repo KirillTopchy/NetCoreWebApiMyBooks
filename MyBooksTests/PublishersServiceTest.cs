@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System;
 using MyBooks.Data.Services;
 using System.Linq;
+using MyBooks.Data.ViewModels;
+using MyBooks.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MyBooksTests
 {
@@ -89,6 +92,36 @@ namespace MyBooksTests
             var result = _publishersService.GetPublisherById(77);
 
             Assert.That(result, Is.Null);
+        }
+
+        [Test, Order(7)]
+        public void AddPublisher_WithException_Test()
+        {
+            var publisherVM = new PublisherVM()
+            {
+                Name = "1 Publisher",
+            };
+
+            Assert.That(() => _publishersService.AddPublisher(publisherVM), 
+                Throws.TypeOf<PublisherNameException>().With.Message.EqualTo("Name starts with number"));
+        }
+
+        [Test, Order(8)]
+        public void AddPublisher_WithoutException_Test()
+        {
+            var publisherVM = new PublisherVM()
+            {
+                Name = "Publisher 7",
+            };
+
+            var result = _publishersService.AddPublisher(publisherVM);
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(_context.Publishers.ToList(), Has.Count.EqualTo(7));
+                Assert.That(result.Name, Is.EqualTo("Publisher 7"));
+                Assert.That(result.Id, Is.EqualTo(7));
+            });
         }
 
         [OneTimeTearDown]
