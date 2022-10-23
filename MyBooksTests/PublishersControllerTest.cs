@@ -65,6 +65,27 @@ namespace MyBooksTests
             });
         }
 
+        [Test, Order(2)]
+        public void HTTPGET_GetPublisherById_ReturnOk_Test()
+        {
+            var actionResult = _publishersController.GetPublisherById(1);
+            Assert.That(actionResult, Is.TypeOf<OkObjectResult>());
+            var publisherData = (actionResult as OkObjectResult).Value as Publisher;
+            Assert.Multiple(() =>
+            {
+                Assert.That(publisherData, Is.Not.Null);
+                Assert.That(publisherData.Name, Is.EqualTo("publisher 1").IgnoreCase);
+                Assert.That(publisherData.Id, Is.EqualTo(1));
+            });
+        }
+
+        [Test, Order(3)]
+        public void HTTPGET_GetPublisherById_ReturnNotFound_Test()
+        {
+            var actionResult = _publishersController.GetPublisherById(77);
+            Assert.That(actionResult, Is.TypeOf<NotFoundResult>());
+        }
+
         private void SeedDatabase()
         {
             List<Publisher> publishers = new()
