@@ -6,6 +6,8 @@ using MyBooks.Controllers;
 using MyBooks.Data;
 using MyBooks.Data.Models;
 using MyBooks.Data.Services;
+using MyBooks.Data.ViewModels;
+using MyBooks.Exceptions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -84,6 +86,41 @@ namespace MyBooksTests
         {
             var actionResult = _publishersController.GetPublisherById(77);
             Assert.That(actionResult, Is.TypeOf<NotFoundResult>());
+        }
+
+        [Test, Order(4)]
+        public void HTTPGET_AddPublisher_ThrowsNameExcaption_And_ReturnBadRequest_Test()
+        {
+            var publisherVM = new PublisherVM()
+            {
+                Name = "7 Publisher"
+            };
+
+            var actionResult = _publishersController.AddPublisher(publisherVM);
+            var resultData = (actionResult as BadRequestObjectResult).Value.ToString();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(actionResult, Is.TypeOf<BadRequestObjectResult>());
+                Assert.That(_context.Publishers.ToList(), Has.Count.EqualTo(6));
+                Assert.That(resultData, Is.EqualTo("Name starts with number, Publisher name: 7 Publisher"));
+            });
+        }
+
+        [Test, Order(5)]
+        public void HTTPGET_AddPublisher_ReturnCreated_Test()
+        {
+            var publisherVM = new PublisherVM()
+            {
+                Name = "Publisher 7"
+            };
+
+            var actionResult = _publishersController.AddPublisher(publisherVM);
+            Assert.Multiple(() =>
+            {
+                Assert.That(actionResult, Is.TypeOf<CreatedResult>());
+                Assert.That(_context.Publishers.ToList(), Has.Count.EqualTo(7));
+            });
         }
 
         private void SeedDatabase()
