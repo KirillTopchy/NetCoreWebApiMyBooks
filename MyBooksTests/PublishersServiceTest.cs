@@ -4,6 +4,8 @@ using MyBooks.Data.Models;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System;
+using MyBooks.Data.Services;
+using System.Linq;
 
 namespace MyBooksTests
 {
@@ -13,21 +15,66 @@ namespace MyBooksTests
             .UseInMemoryDatabase(databaseName: "BookDbTest")
             .Options;
 
-        AppDbContext context;
+        private AppDbContext _context;
+        private PublishersService _publishersService;
 
         [OneTimeSetUp]
         public void Setup()
         {
-            context = new AppDbContext(dbContextOptions);
-            context.Database.EnsureCreated();
+            _context = new AppDbContext(dbContextOptions);
+            _context.Database.EnsureCreated();
 
             SeedDatabase();
+
+            _publishersService = new PublishersService(_context);
+        }
+
+        [Test, Order(1)]
+        public void GetAllPublishers_WithNoSortBy_WithNoSearcString_WithNoPageNumber()
+        {
+            var result = _publishersService.GetAllPublishers(string.Empty, string.Empty, null);
+
+            Assert.That(result, Has.Count.EqualTo(5));
+        }
+
+        [Test, Order(2)]
+        public void GetAllPublishers_WithNoSortBy_WithNoSearcString_WithPageNumber()
+        {
+            var result = _publishersService.GetAllPublishers(string.Empty, string.Empty, 2);
+
+            Assert.That(result, Has.Count.EqualTo(1));
+        }
+
+        [Test, Order(3)]
+        public void GetAllPublishers_WithNoSortBy_WithSearcString_WithNoPageNumber()
+        {
+            var result = _publishersService.GetAllPublishers(string.Empty, "3", null);
+
+            Assert.That(result, Has.Count.EqualTo(1));
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.First().Name, Is.EqualTo("Publisher 3"));
+                Assert.That(result.First().Id, Is.EqualTo(3));
+            });
+        }
+
+        [Test, Order(4)]
+        public void GetAllPublishers_WithSortBy_WithNoSearcString_WithNoPageNumber()
+        {
+            var result = _publishersService.GetAllPublishers("name_desc", string.Empty, null);
+
+            Assert.That(result, Has.Count.EqualTo(5));
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.First().Name, Is.EqualTo("Publisher 6"));
+                Assert.That(result.First().Id, Is.EqualTo(6));
+            });
         }
 
         [OneTimeTearDown]
         public void CleanUp()
         {
-            context.Database.EnsureDeleted();
+            _context.Database.EnsureDeleted();
         }
 
         private void SeedDatabase()
@@ -46,8 +93,20 @@ namespace MyBooksTests
                         Id = 3,
                         Name = "Publisher 3"
                     },
+                    new Publisher() {
+                        Id = 4,
+                        Name = "Publisher 4"
+                    },
+                    new Publisher() {
+                        Id = 5,
+                        Name = "Publisher 5"
+                    },
+                    new Publisher() {
+                        Id = 6,
+                        Name = "Publisher 6"
+                    },
             };
-            context.Publishers.AddRange(publishers);
+            _context.Publishers.AddRange(publishers);
 
             List<Author> authors = new()
             {
@@ -62,7 +121,7 @@ namespace MyBooksTests
                     FullName = "Author 2"
                 }
             };
-            context.Authors.AddRange(authors);
+            _context.Authors.AddRange(authors);
 
             List<Book> books = new()
             {
@@ -89,7 +148,7 @@ namespace MyBooksTests
                     PublisherId = 1
                 }
             };
-            context.Books.AddRange(books);
+            _context.Books.AddRange(books);
 
             List<Book_Author_JoinModel> books_authors = new()
             {
@@ -112,9 +171,9 @@ namespace MyBooksTests
                     AuthorId = 2
                 },
             };
-            context.Books_Authors.AddRange(books_authors);
+            _context.Books_Authors.AddRange(books_authors);
 
-            context.SaveChanges();
+            _context.SaveChanges();
         }
     }
 }
