@@ -102,7 +102,7 @@ namespace MyBooksTests
                 Name = "1 Publisher",
             };
 
-            Assert.That(() => _publishersService.AddPublisher(publisherVM), 
+            Assert.That(() => _publishersService.AddPublisher(publisherVM),
                 Throws.TypeOf<PublisherNameException>().With.Message.EqualTo("Name starts with number"));
         }
 
@@ -121,6 +121,22 @@ namespace MyBooksTests
                 Assert.That(_context.Publishers.ToList(), Has.Count.EqualTo(7));
                 Assert.That(result.Name, Is.EqualTo("Publisher 7"));
                 Assert.That(result.Id, Is.EqualTo(7));
+            });
+        }
+
+        [Test, Order(9)]
+        public void GetPublisherData_Test()
+        {
+            var result = _publishersService.GetPublisherData(1);
+            var firstBookTitle = result.BookAuthors
+                .OrderBy(n => n.BookName).FirstOrDefault().BookName;
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Name, Is.EqualTo("Publisher 1"));
+                Assert.That(result.BookAuthors, Is.Not.Empty);
+                Assert.That(result.BookAuthors, Has.Count.EqualTo(2));
+                Assert.That(firstBookTitle, Is.EqualTo("Book 1 Title"));
             });
         }
 
