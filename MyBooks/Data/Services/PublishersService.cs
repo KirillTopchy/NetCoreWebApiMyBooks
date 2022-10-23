@@ -72,8 +72,6 @@ namespace MyBooks.Data.Services
             }
         }
 
-        private bool StringStartsWithNumber(string name) => Regex.IsMatch(name, @"^\d");
-
         public List<Publisher> GetAllPublishers(string sortBy, string searchString, int? pageNumber)
         {
             var allPublishers = _context.Publishers
@@ -105,6 +103,8 @@ namespace MyBooks.Data.Services
             allPublishers = PaginatedList<Publisher>.Create(allPublishers.AsQueryable(), pageNumber ?? 1, pageSize);
 
             return allPublishers;
-        } 
+        }
+
+        private static bool StringStartsWithNumber(string name) => Regex.IsMatch(name, @"^\d");
     }
 }

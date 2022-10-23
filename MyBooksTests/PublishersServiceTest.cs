@@ -9,6 +9,8 @@ using System.Linq;
 using MyBooks.Data.ViewModels;
 using MyBooks.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Policy;
+using Publisher = MyBooks.Data.Models.Publisher;
 
 namespace MyBooksTests
 {
@@ -138,6 +140,22 @@ namespace MyBooksTests
                 Assert.That(result.BookAuthors, Has.Count.EqualTo(2));
                 Assert.That(firstBookTitle, Is.EqualTo("Book 1 Title"));
             });
+        }
+
+        [Test, Order(10)]
+        public void DelePublisherById_WithException_Test()
+        {
+            Assert.That(() => _publishersService.DelePublisherById(99),
+                Throws.TypeOf<Exception>().With.Message.EqualTo("The publisher with id 99 does not exist"));
+        }
+
+        [Test, Order(11)]
+        public void DelePublisherById_WithoutException_Test()
+        {
+            _publishersService.DelePublisherById(1);
+            _publishersService.DelePublisherById(2);
+
+            Assert.That(_context.Publishers.Count, Is.EqualTo(5));
         }
 
         [OneTimeTearDown]
